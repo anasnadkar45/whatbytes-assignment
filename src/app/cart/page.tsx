@@ -9,6 +9,7 @@ import { Header } from "../components/Header"
 import { Footer } from "../components/footer"
 import Image from "next/image"
 import { RootState } from "../redux/store"
+import { toast } from "sonner"
 
 export default function Cart() {
     const cart = useSelector((state: RootState) => state.cart)
@@ -66,7 +67,10 @@ export default function Cart() {
                                             >
                                                 +
                                             </button>
-                                            <button className="ml-4 text-red-500" onClick={() => handleRemoveItem(item.product.id)}>
+                                            <button className="ml-4 text-red-500" onClick={() => {
+                                                handleRemoveItem(item.product.id)
+                                                toast(`${item.product.title} Removed from cart`)
+                                            }}>
                                                 <Trash2 size={18} />
                                             </button>
                                         </div>

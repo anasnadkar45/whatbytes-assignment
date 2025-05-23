@@ -11,6 +11,7 @@ import { Header } from "@/app/components/Header"
 import { Footer } from "@/app/components/footer"
 import Image from "next/image"
 import { useFetch } from "@/app/hooks/useFetch"
+import { toast } from "sonner"
 
 
 export default function ProductDetail() {
@@ -21,14 +22,14 @@ export default function ProductDetail() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-    if (!id || !data.length) return;
+        if (!id || !data.length) return;
 
-    const numericId = Number(id)
-    const foundProduct = data.find((p) => p.id === numericId)
-    if (foundProduct) {
-        setProduct(foundProduct)
-    }
-}, [id, data])
+        const numericId = Number(id)
+        const foundProduct = data.find((p) => p.id === numericId)
+        if (foundProduct) {
+            setProduct(foundProduct)
+        }
+    }, [id, data])
 
 
     const handleAddToCart = () => {
@@ -55,7 +56,7 @@ export default function ProductDetail() {
         )
     }
 
-    
+
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
@@ -110,7 +111,10 @@ export default function ProductDetail() {
 
                         <Button
                             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded w-full"
-                            onClick={handleAddToCart}
+                            onClick={() => {
+                                handleAddToCart()
+                                toast(`${product.title} Added to cart`)
+                            }}
                         >
                             Add to Cart
                         </Button>
