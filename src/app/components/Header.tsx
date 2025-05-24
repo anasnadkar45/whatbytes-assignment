@@ -1,9 +1,8 @@
 "use client"
 import { Search, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState, useEffect } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
-import { useState, useEffect } from "react"
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux/store'
 
@@ -19,20 +18,33 @@ export const Header = () => {
         setSearchQuery(query)
     }, [searchParams])
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault()
-
+    const updateSearchParams = (query: string) => {
         const params = new URLSearchParams(searchParams.toString())
-        if (searchQuery) {
-            params.set("search", searchQuery)
+        if (query) {
+            params.set("search", query)
         } else {
             params.delete("search")
         }
-
         router.push(`${pathname}?${params.toString()}`)
     }
 
-    const cartItemsCount = cart.items.reduce((total:number, item:any) => total + item.quantity, 0)
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        updateSearchParams(searchQuery)
+    }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            updateSearchParams(searchQuery)
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [searchQuery])
+
+    const cartItemsCount = cart.items.reduce(
+        (total: number, item: any) => total + item.quantity,
+        0
+    )
+
     return (
         <header className="bg-blue-700 text-white">
             <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -40,7 +52,7 @@ export const Header = () => {
                     Logo
                 </Link>
 
-                <form onSubmit={handleSearch} className="relative max-w-md w-full mx-4">
+                <form onSubmit={handleSearchSubmit} className="relative max-w-md w-full mx-4">
                     <input
                         type="text"
                         placeholder="Search for products..."
@@ -48,7 +60,10 @@ export const Header = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                    <button
+                        type="submit"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                    >
                         <Search size={18} />
                     </button>
                 </form>
